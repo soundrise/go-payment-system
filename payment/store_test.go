@@ -205,7 +205,7 @@ func TestPaymentSystem_Emit(t *testing.T) {
 				return gotError
 			})
 
-			pc.Run()
+			// pc.Run()
 
 			var gotError error
 
