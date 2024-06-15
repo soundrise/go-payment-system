@@ -1,0 +1,52 @@
+run:
+  deadline: 5m
+
+linters-settings:
+  funlen:
+    lines: 120  # 120 lines for runtime  
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  # disable some excludes that golangci-lint has by default. see https://github.com/golangci/golangci-lint
+  exclude-use-default: false
+  exclude-rules:
+      # Disable duplicate code or unused params validation in testing
+      - path: _test\.go$
+        linters:
+          - dupl
+          - unparam
+      # These checks are not really useful
+      - linters:
+        - errcheck
+        text: "Error return value of `.*(Close|Remove)` is not checked"
+      # We read arbitrary files in build system, it's not a problem
+      - path: build/
+        linters:
+        - gosec
+        text: "Potential file inclusion via variable"
+      # We run arbitrary subprocesses in build system, it's not a problem
+      - path: build/
+        linters:
+        - gosec
+        text: "Subprocess (launching should be audited|launched with variable)"    
+
+linters:
+  enable-all: true
+  disable:
+    # This project does not have a rule to have no globals
+    - gochecknoglobals
+    # This project does not have a rule to have no inits
+    - gochecknoinits
+    # This test has too many false positives
+    - gocyclo
+    # This project does not have a standard line length
+    - lll
+    # This project does not have a rule to forbid naked returns
+    - nakedret
+    # This project does not care about optimizing out few bytes of memory
+    - maligned
+    # Temporary disabled linters
+    - gomnd
+    - mnd
+    - depguard

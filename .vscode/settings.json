@@ -1,0 +1,12 @@
+{
+    "go.lintOnSave": "workspace",
+    "go.lintTool":"golangci-lint",
+    "go.lintFlags": [
+        "-c", ".golangci.yml",
+        "--fast"
+	],
+    "go.useLanguageServer": true,
+    "gopls": {
+	    "formatting.gofumpt": true,
+    },
+}
