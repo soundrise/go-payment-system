@@ -148,6 +148,9 @@ func (ps *PaymentSystem) CreateAccount(c Customer, accType string, currencyCode 
 		ps.store[c.Id] = accounts
 	}
 
+	// simulate long processing work
+	time.Sleep(time.Second * 5)
+
 	log.Printf("Account with number:%s is created successfully\n", na.Num)
 
 	return nil
@@ -527,7 +530,6 @@ func (ps *PaymentSystem) TransferJson(data []byte) error {
 
 func (ps *PaymentSystem) PrintStoreJson() error {
 	fmt.Println("______________________________________________________")
-	fmt.Println()
 	fmt.Println("\nStore Info:")
 	fmt.Println("______________________________________________________")
 

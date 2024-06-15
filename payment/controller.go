@@ -37,7 +37,7 @@ func (pc PaymentController) Add(h HandlerFunc) {
 // This func execute transaction or batch of transactions
 // and manage the concurency
 // If at list one transaction function will give an error - transaction will aborted.
-func (pc PaymentController) Run() {
+func (pc PaymentController) Run(end chan bool) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println("Recovered in f", r)
@@ -64,6 +64,8 @@ func (pc PaymentController) Run() {
 					}
 
 					if ok && len(pc.workers) == 0 {
+						end <- true
+
 						return
 					}
 				}

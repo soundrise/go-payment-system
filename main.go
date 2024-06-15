@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/soundrise/go-payment-system/payment"
 )
@@ -213,9 +212,18 @@ func main() { //nolint:funlen
 
 	pc.Add(ps.PrintStoreJson)
 
-	pc.Run()
+	e := make(chan bool)
 
-	time.Sleep(time.Millisecond * 50)
+	pc.Run(e)
 
-	log.Println("Payment System finished!")
+	// time.Sleep(time.Millisecond * 10)
+
+	select {
+	case <-e:
+		{
+			log.Println("Payment System finished!")
+
+			return
+		}
+	}
 }
