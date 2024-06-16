@@ -3,6 +3,7 @@ package payment_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/soundrise/go-payment-system/payment"
@@ -21,6 +22,8 @@ func TestPaymentSystem_CreateAccount(t *testing.T) {
 	// expectedUSDCurrencyCode := payment.USD
 	expectedAmount := float32(5.0)
 	expectedNegAmount := float32(-5.0)
+
+	end := make(chan bool)
 
 	invalidCustomer := payment.Customer{
 		Name: "inval",
@@ -96,7 +99,7 @@ func TestPaymentSystem_CreateAccount(t *testing.T) {
 				return gotError
 			})
 
-			pc.Run()
+			pc.Run(end)
 
 			if tt.expectedErr != nil {
 				assert.EqualError(t, gotError, tt.expectedErr.Error())
@@ -118,6 +121,8 @@ func TestPaymentSystem_Emit(t *testing.T) {
 	// expectedUSDCurrencyCode := payment.USD
 	expectedAmount := float32(5000.0)
 	expectedNegAmount := float32(-5000.0)
+
+	end := make(chan bool)
 
 	invalidCustomer := payment.Customer{
 		Id:        "33",
@@ -198,23 +203,23 @@ func TestPaymentSystem_Emit(t *testing.T) {
 			ps := payment.NewPaymentSystem()
 			pc := payment.NewPaymentController(ps)
 
-			// var gotError error
+			var gotError error
+
 			pc.Add(func() error {
-				gotError := ps.CreateAccount(tt.customer, tt.customer.AccPrefix, tt.currencyCode, tt.amount)
+				gotError = ps.CreateAccount(tt.customer, tt.customer.AccPrefix, tt.currencyCode, tt.amount)
 
 				return gotError
 			})
-
-			// pc.Run()
-
-			var gotError error
 
 			pc.Add(func() error {
 				gotError = ps.Emit(tt.amount)
 
 				return gotError
 			})
-			pc.Run()
+
+			pc.Run(end)
+
+			time.Sleep(time.Second * 5)
 
 			if tt.expectedErr != nil {
 				assert.EqualError(t, gotError, tt.expectedErr.Error())
